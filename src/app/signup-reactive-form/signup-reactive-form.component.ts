@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy  } from '@angular/core';
-import { FormGroup, FormControl, FormBuilder, Validators, EmailValidator, AbstractControl   } from '@angular/forms';
+import { FormGroup, FormControl, FormArray, FormBuilder, Validators, EmailValidator, AbstractControl   } from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
 import 'rxjs/add/operator/debounceTime';
 
@@ -40,6 +40,10 @@ export class SignupReactiveFormComponent implements OnInit, OnDestroy {
     this.sub.forEach(sub => sub.unsubscribe());
   }
 
+addAddress(): void {
+    this.addresses.push(this.buildAddress());
+  }
+
 
   private buildForm() {
     this.userForm = this.fb.group({
@@ -65,9 +69,28 @@ export class SignupReactiveFormComponent implements OnInit, OnDestroy {
       phone: '',
       notification: 'email',
       serviceLevel: [''], //, CustomValidators.serviceLevelRange(1,3)],
-      sendProducts: true
+      sendProducts: true,
+
+      addresses: this.fb.array([this.buildAddress()])
+
     });
 }
+
+get addresses():FormArray{
+  return <FormArray>this.userForm.get('addresses');
+}
+
+private buildAddress(): FormGroup {
+    return this.fb.group({
+      addressType: 'home',
+      country: '',
+      city: '',
+      zip: '',
+      street1: '',
+      street2: ''
+    });
+  }
+
 
 private setNotification(notifyVia: string) {
     const phoneControl = this.userForm.get('phone');
